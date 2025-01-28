@@ -27,25 +27,45 @@ namespace exercise.pizzashopapi.Data
                 //order data
                 if(!db.Orders.Any())
                 {
-                    db.Add(new Order { 
+                    db.Add(new Order
+                    {
                         CustomerId = 1,
-                        //Customer = new Customer() { Id = 1,Name = "Nigel" },
                         PizzaId = 1,
-                        //Pizza = new Pizza() { Id = 1,Name = "Vegan Cheese Tastic" }
+                        EstimatedDeliveryTime = new TimeOnly(0, 35, 0)
                     });
 
                     db.Add(new Order {
                         CustomerId = 2,
-                        //Customer = new Customer() { Id = 2, Name = "Dave" },
                         PizzaId = 2,
-                        //Pizza = new Pizza() { Id = 2,Name = "Cheese & Pineapple" }
+                        EstimatedDeliveryTime = new TimeOnly(0, 15, 0)
                     });
 
                     db.Add(new Order {
                         CustomerId = 3,
-                        //Customer = new Customer() { Id = 3, Name = "Martin" },
                         PizzaId = 3,
-                        //Pizza = new Pizza() { Id = 3,Name = "Kebab" }
+                        EstimatedDeliveryTime = new TimeOnly(0, 40, 0)
+                    });
+                    await db.SaveChangesAsync();
+                }
+
+                if (!db.Toppings.Any())
+                {
+                    db.Add(new Topping
+                    {
+                        Id = 1,
+                        Name = "Pepperoni"
+                    });
+
+                    db.Add(new Topping
+                    {
+                        Id = 2,
+                        Name = "Ham"
+                    });
+
+                    db.Add(new Topping
+                    {
+                        Id= 3,
+                        Name = "Halloumi"
                     });
                     await db.SaveChangesAsync();
                 }

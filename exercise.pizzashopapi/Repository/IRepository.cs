@@ -20,6 +20,11 @@ namespace exercise.pizzashopapi.Repository
         public Task<Customer> AddCustomer(Customer c);
 
 
+        public Task<IEnumerable<Topping>> GetToppings();
+        public Task<Topping> AddTopping(Topping topping);
 
+
+        public Task<IEnumerable<OrderTopping>> GetOrdersToppings();
+        public Task<OrderTopping> AddOrderTopping(OrderTopping o);
     }
 }

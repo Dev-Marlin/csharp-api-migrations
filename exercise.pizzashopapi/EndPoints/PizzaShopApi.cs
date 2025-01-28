@@ -24,6 +24,12 @@ namespace exercise.pizzashopapi.EndPoints
             pizzas.MapGet("/customers", GetCustomers);
             pizzas.MapGet("/customers/{id}", GetCustomerById);
             pizzas.MapPost("/customers/add", AddCustomer);
+
+            pizzas.MapGet("/toppings", GetToppings);
+            pizzas.MapPost("/toppings/add", AddTopping);
+
+            pizzas.MapGet("/ordertopping", GetOrderToppings);
+            pizzas.MapPost("/ordertopping/add", AddOrderTopping);
         }
 
         // Pizza endpoints
@@ -49,7 +55,8 @@ namespace exercise.pizzashopapi.EndPoints
                     {
                         CustomerId = order.CustomerId,
                         PizzaId = order.PizzaId,
-                        Customer = getCustomer
+                        Customer = getCustomer,
+                        EstimatedDeliveryTime = order.EstimatedDeliveryTime
                     };
 
                     orderList.Add(gtop);
@@ -125,7 +132,8 @@ namespace exercise.pizzashopapi.EndPoints
                     CustomerId = order.CustomerId,
                     PizzaId = order.PizzaId,
                     Customer = gc,
-                    Pizza = gp
+                    Pizza = gp,
+                    EstimatedDeliveryTime = order.EstimatedDeliveryTime
                 };
 
                 orderList.Add(go);
@@ -159,7 +167,8 @@ namespace exercise.pizzashopapi.EndPoints
                     CustomerId = order.CustomerId,
                     PizzaId = order.PizzaId,
                     Customer = gc,
-                    Pizza = gp
+                    Pizza = gp,
+                    EstimatedDeliveryTime = order.EstimatedDeliveryTime
                 };
 
                 orderList.Add(go);
@@ -167,7 +176,7 @@ namespace exercise.pizzashopapi.EndPoints
             return TypedResults.Ok(orderList);
         }
 
-        public static async Task<IResult> CreateOrder(IRepository repo, int customerId, int pizzaId)
+        public static async Task<IResult> CreateOrder(IRepository repo, int customerId, int pizzaId, TimeOnly deliveryTime)
         {
             var customer = await repo.GetCustomerById(customerId);
             var pizza = await repo.GetPizzaById(pizzaId);
@@ -177,7 +186,8 @@ namespace exercise.pizzashopapi.EndPoints
                 CustomerId = customerId,
                 PizzaId = pizzaId,
                 Customer = customer,
-                Pizza = pizza
+                Pizza = pizza,
+                EstimatedDeliveryTime = deliveryTime
             };
 
             var order = await repo.CreateOrder(tempOrder);
@@ -200,7 +210,8 @@ namespace exercise.pizzashopapi.EndPoints
                 CustomerId = order.CustomerId,
                 PizzaId = order.PizzaId,
                 Customer = gc,
-                Pizza = gp
+                Pizza = gp,
+                EstimatedDeliveryTime = order.EstimatedDeliveryTime
             };
 
             return TypedResults.Ok(go);
@@ -232,7 +243,8 @@ namespace exercise.pizzashopapi.EndPoints
                     {
                         CustomerId = order.CustomerId,
                         PizzaId = order.PizzaId,
-                        Pizza =getPizza
+                        Pizza =getPizza,
+                        EstimatedDeliveryTime = order.EstimatedDeliveryTime
                     };
 
                     orderList.Add(getOrder);
@@ -270,7 +282,8 @@ namespace exercise.pizzashopapi.EndPoints
                 {
                     CustomerId = order.CustomerId,
                     PizzaId = order.PizzaId,
-                    Pizza = getPizza
+                    Pizza = getPizza,
+                    EstimatedDeliveryTime = order.EstimatedDeliveryTime
                 };
 
                 orderList.Add(getOrder);
@@ -297,6 +310,86 @@ namespace exercise.pizzashopapi.EndPoints
             };
 
             return TypedResults.Ok(gc);
+        }
+
+
+        // Topping endpoints
+
+        public static async Task<IResult> GetToppings(IRepository repo)
+        {
+            var topping = await repo.GetToppings();
+
+            List<GetTopping> toppingList = new List<GetTopping>();
+
+            foreach(var t in topping) 
+            {
+                GetTopping gt = new GetTopping()
+                {
+                    Id = t.Id,
+                    Name = t.Name
+                };
+
+                toppingList.Add(gt);
+            }
+
+            return TypedResults.Ok(toppingList);
+        }
+
+        public static async Task<IResult> AddTopping(IRepository repo, Topping topping)
+        {
+            await repo.AddTopping(topping);
+
+            GetTopping gt = new GetTopping()
+            {
+                Id=topping.Id,
+                Name = topping.Name
+            };
+
+            return TypedResults.Ok(gt);
+        }
+
+        // OrderTopping endpoints
+        public static async Task<IResult> GetOrderToppings(IRepository repo)
+        {
+            var orderToppings = await repo.GetOrdersToppings();
+
+            List<GetOrderTopping> orderToppingList = new List<GetOrderTopping>();
+
+            foreach(var t in orderToppings)
+            {
+                GetTopping gt = new GetTopping()
+                {
+                    Id = t.ToppingId,
+                    Name = t.Topping.Name
+                };
+
+                GetOrderTopping getOrderTopping = new GetOrderTopping()
+                {
+                    ToppingId = t.ToppingId,
+                    PizzaId = t.PizzaId,
+                    CustomerId = t.CustomerId,
+                    GetTopping = gt
+                };
+
+                orderToppingList.Add(getOrderTopping);
+            }
+
+
+            return TypedResults.Ok(orderToppingList);
+        }
+
+        public static async Task<IResult> AddOrderTopping(IRepository repo, OrderTopping orderTopping)
+        {
+            await repo.AddOrderTopping(orderTopping);
+
+            GetOrderTopping ot = new GetOrderTopping()
+            {
+                CustomerId = orderTopping.CustomerId,
+                PizzaId= orderTopping.PizzaId,
+                ToppingId = orderTopping.ToppingId
+            };
+
+            return TypedResults.Ok(ot);
         }
     }
 }

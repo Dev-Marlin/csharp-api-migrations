@@ -8,5 +8,6 @@ namespace exercise.pizzashopapi.ViewModel
         public int PizzaId { get; set; }
         public GetCustomer Customer { get; set; }
         public GetPizza Pizza { get; set; }
+        public TimeOnly EstimatedDeliveryTime { get; set; }
     }
 }
