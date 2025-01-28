@@ -12,6 +12,13 @@ namespace exercise.pizzashopapi.Data
             connectionString = configuration.GetValue<string>("ConnectionStrings:DefaultConnectionString");
 
         }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        { 
+            modelBuilder.Entity<Order>().HasKey(a => new { a.CustomerId, a.PizzaId });
+            modelBuilder.Entity<Order>().HasOne(p => p.Pizza).WithMany(o => o.Orders).HasForeignKey(o => o.PizzaId);
+            modelBuilder.Entity<Order>().HasOne(c => c.Customer).WithMany(o => o.Orders).HasForeignKey(o => o.CustomerId);
+        }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {            
             optionsBuilder.UseNpgsql(connectionString);
