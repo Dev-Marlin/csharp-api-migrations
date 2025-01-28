@@ -14,6 +14,7 @@ namespace exercise.pizzashopapi.EndPoints
             var pizzas = app.MapGroup("/pizzashop");
 
             pizzas.MapGet("/pizzas", GetPizzas);
+            pizzas.MapGet("/pizzas/{id}", GetPizzaById);
             pizzas.MapPost("/pizzas/add", AddPizza);
 
             pizzas.MapGet("/orders", GetOrders);
@@ -50,6 +51,8 @@ namespace exercise.pizzashopapi.EndPoints
                         PizzaId = order.PizzaId,
                         Customer = getCustomer
                     };
+
+                    orderList.Add(gtop);
                 }
 
                 GetPizzaWithOrders getPizza = new GetPizzaWithOrders()
@@ -59,9 +62,25 @@ namespace exercise.pizzashopapi.EndPoints
                     Price = pizza.Price,
                     Orders = orderList
                 };
+
+                pizzaList.Add(getPizza);
             }
 
             return TypedResults.Ok(pizzaList);
+        }
+
+        public static async Task<IResult> GetPizzaById(IRepository repo, int id)
+        {
+            var pizza = await repo.GetPizzaById(id);
+
+            GetPizza getPizza = new GetPizza()
+            {
+                Id = pizza.Id,
+                Name = pizza.Name,
+                Price = pizza.Price,
+            };
+
+            return TypedResults.Ok(getPizza);
         }
 
         public static async Task<IResult> AddPizza(IRepository repo, Pizza pizza)
