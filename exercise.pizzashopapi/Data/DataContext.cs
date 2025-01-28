@@ -12,7 +12,6 @@ namespace exercise.pizzashopapi.Data
             connectionString = configuration.GetValue<string>("ConnectionStrings:DefaultConnectionString");
 
         }
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         { 
             modelBuilder.Entity<Order>().HasKey(a => new { a.CustomerId, a.PizzaId });

@@ -14,11 +14,11 @@ namespace exercise.pizzashopapi.Repository
         }
         public async Task<IEnumerable<Pizza>> GetPizzas()
         {
-            return await _db.Pizzas.ToListAsync();
+            return await _db.Pizzas.Include(p => p.Orders).ToListAsync();
         }
         public async Task<Pizza> GetPizzaById(int id)
         {
-            return await _db.Pizzas.FirstAsync(x => x.Id == id);
+            return await _db.Pizzas.Include(p => p.Orders).FirstAsync(x => x.Id == id);
         }
         public async Task<Pizza> AddPizza(Pizza p)
         {
@@ -30,11 +30,11 @@ namespace exercise.pizzashopapi.Repository
 
         public async Task<IEnumerable<Customer>> GetCustomers()
         {
-            return await _db.Customers.ToListAsync();
+            return await _db.Customers.Include(c => c.Orders).ToListAsync();
         }
         public async Task<Customer> GetCustomerById(int id)
         {
-            return await _db.Customers.FirstAsync(c => c.Id == id);
+            return await _db.Customers.Include(c => c.Orders).FirstAsync(c => c.Id == id);
         }
         public async Task<Customer> AddCustomer(Customer c)
         {
